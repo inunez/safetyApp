@@ -1,9 +1,12 @@
 package com.mycompany.safety;
 
+import com.codename1.capture.Capture;
 import com.codename1.components.InfiniteProgress;
 import com.codename1.io.Log;
 import com.codename1.media.Media;
 import com.codename1.media.MediaManager;
+import com.codename1.ui.Button;
+import com.codename1.ui.ComboBox;
 import com.codename1.ui.Command;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
@@ -18,14 +21,21 @@ import com.codename1.ui.TextField;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.URLImage;
 import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.GridLayout;
+import com.codename1.ui.list.DefaultListModel;
+import com.codename1.ui.list.ListModel;
 import com.codename1.ui.plaf.UIManager;
+import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.util.Resources;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-        
+
 public class MyApplication {
 
     private Form current;
@@ -254,7 +264,7 @@ public class MyApplication {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                Form report = createReportForm();
+                Form report = createReportForm(nonConformance);
                 report.show();
             }
         });
@@ -304,7 +314,7 @@ public class MyApplication {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                Form report = createReportForm();
+                Form report = createReportForm(safetyWalk);
                 report.show();
             }
         });
@@ -354,7 +364,7 @@ public class MyApplication {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                Form report = createReportForm();
+                Form report = createReportForm(plantRegister);
                 report.show();
             }
         });
@@ -406,8 +416,26 @@ public class MyApplication {
 
     }
 
-    public Form createReportForm() {
-        Form report = new Form("Report Form");
+    public Form createReportForm(Form back) {
+        Form report = new Form("Non-Conformance Report");
+
+        Image im = null;
+        Label logo;
+        try {
+            im = Image.createImage("/Logo.jpg").modifyAlpha((byte) 16);
+        } catch (IOException ex) {
+            //Logger.getLogger(MyApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (im != null) {
+            im = im.scaledWidth(Display.getInstance().getDisplayWidth());
+            logo = new Label(im);
+//            Hashtable h = new Hashtable();
+//            h.put("bgImage", im);
+//            UIManager.getInstance().setThemeProps(h);
+//            Display.getInstance().getCurrent().refreshTheme();
+        } else {
+            logo = new Label("No Logo");
+        }
 
         report.setLayout(new BorderLayout());
         Toolbar bar = new Toolbar();
@@ -418,16 +446,178 @@ public class MyApplication {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-
+                back.showBack();
             }
         });
 
-        TextArea desc = new TextArea();
-        desc.setText("Non Conformance Report");
-        desc.setEditable(false);
+        //TOP
+        TableLayout topLayout = new TableLayout(2, 3);
+        Container top = new Container(topLayout);
+        Label lblReporter = new Label("Reported by ");
+        TableLayout.Constraint constraint = topLayout.createConstraint();
+        constraint.setWidthPercentage(30);
+        top.addComponent(constraint, lblReporter);
 
-        report.addComponent(BorderLayout.SOUTH, desc);
+        TextArea txtReporterName = new TextArea();
+        txtReporterName.setEditable(false);
+        txtReporterName.setHint("Name");
+        constraint = topLayout.createConstraint();
+        constraint.setWidthPercentage(45);
+        top.addComponent(constraint, txtReporterName);
+
+        constraint = topLayout.createConstraint();
+        constraint.setWidthPercentage(25);
+        constraint.setHeightPercentage(5);
+        constraint.setVerticalSpan(2);
+        top.addComponent(constraint, logo);
+
+        Label lblSignature = new Label("Signature");
+        constraint = topLayout.createConstraint();
+        constraint.setWidthPercentage(30);
+        top.addComponent(constraint, lblSignature);
+
+        TextArea txtReporterSignature = new TextArea();
+        txtReporterSignature.setEditable(false);
+        txtReporterSignature.setHint("Signature");
+        constraint = topLayout.createConstraint();
+        constraint.setWidthPercentage(45);
+        top.addComponent(constraint, txtReporterSignature);
+
+        //MIDDLE
+        TableLayout middleLayout = new TableLayout(13, 2);
+        Container middle = new Container(middleLayout);
+
+        middle.addComponent(new Label("Date"));
+        TextField txtDate = new TextField();
+        txtDate.setHint("DD/MM/YYYY");
+        constraint = middleLayout.createConstraint();
+        constraint.setWidthPercentage(50);
+        middle.addComponent(constraint, txtDate);
+
+        middle.addComponent(new Label("Project"));
+        String[] p = {"Project One", "Project Two", "Project Three", "Add..."};
+        ComboBox combo = new ComboBox(new DefaultListModel(p));
+        middle.addComponent(combo);
+
+        middle.addComponent(new Label("Company"));
+        String[] c = {"Company A", "Company B", "Company C", "Add..."};
+        combo = new ComboBox(new DefaultListModel(c));
+        middle.addComponent(combo);
+
+        middle.addComponent(new Label("Attention to"));
+        TextField txtAttentionTo = new TextField();
+        middle.addComponent(txtAttentionTo);
+
+        middle.addComponent(new Label("Location"));
+        TextField txtLocation = new TextField();
+        middle.addComponent(txtLocation);
+
+        middle.addComponent(new Label("Type of NC"));
+        String[] t = {"Type A1", "Type B1", "Type C1"};
+        combo = new ComboBox(new DefaultListModel(t));
+        middle.addComponent(combo);
+
+        middle.addComponent(new Label("Risk Ranking"));
+        String[] r = {"Extreme Risk - Immediate action required", "Very High Risk - Immediate action required", "High Risk - Immediate action required",
+            "Medium Risk - Close-Of-Business of current day", "Low Risk - Action within 24 Hours", "Very Low Risk - Action within 48 Hours"};
+        combo = new ComboBox(new DefaultListModel(r));
+        middle.addComponent(combo);
+
+        Label lblDesc = new Label("Description");
+        constraint = middleLayout.createConstraint();
+        constraint.setHorizontalAlign(Component.CENTER);
+        constraint.setHorizontalSpan(2);
+        middle.addComponent(constraint, lblDesc);
+
+        TextArea desc = new TextArea();
+        constraint = middleLayout.createConstraint();
+        constraint.setHorizontalSpan(2);
+        constraint.setHeightPercentage(10);
+        constraint.setWidthPercentage(100);
+        middle.addComponent(constraint, desc);
+
+        Label lblAction = new Label("Action Required");
+        constraint = middleLayout.createConstraint();
+        constraint.setHorizontalAlign(Component.CENTER);
+        constraint.setHorizontalSpan(2);
+        middle.addComponent(constraint, lblAction);
+
+        TextArea action = new TextArea();
+        constraint = middleLayout.createConstraint();
+        constraint.setHorizontalSpan(2);
+        constraint.setHeightPercentage(10);
+        constraint.setWidthPercentage(100);
+        middle.addComponent(constraint, action);
+
+        Label lblImages = new Label("Images");
+        constraint = middleLayout.createConstraint();
+        constraint.setHorizontalAlign(Component.CENTER);
+        constraint.setHorizontalSpan(2);
+        middle.addComponent(constraint, lblImages);
+
+        Label images = new Label();
+        constraint = middleLayout.createConstraint();
+        constraint.setHorizontalSpan(2);
+        constraint.setHeightPercentage(10);
+        constraint.setWidthPercentage(100);
+        middle.addComponent(constraint, images);
+
+        //BOTTOM
+        Container bottom = new Container(new GridLayout(1, 3));
+        Button btnCancel = new Button("Cancel");
+        btnCancel.addActionListener((e)->{
+            back.showBack();
+        });
+        bottom.addComponent(btnCancel);
+
+        Button btnImages = new Button("Add Image");
+        btnImages.addActionListener((e)->{
+            addImages(images);
+            report.revalidate();
+        });
+        bottom.addComponent(btnImages);
+
+        Button btnSave = new Button("Save");
+        btnSave.addActionListener((e)->{
+            //save();
+        });
+        bottom.addComponent(btnSave);
+
+        report.addComponent(BorderLayout.NORTH, top);
+        middle.setScrollableY(true);
+        report.addComponent(BorderLayout.CENTER, middle);
+        report.addComponent(BorderLayout.SOUTH, bottom);
+
+        report.setScrollable(true);
         return report;
     }
 
+    private void addImages(Label listImages){
+        
+        Image i = listImages.getStyle().getBgImage();
+                if(i != null) {
+            i.dispose();
+        }
+        listImages.getStyle().setBgImage(null);
+
+        Capture.capturePhoto((ActionEvent evt) -> {
+            InputStream is = null;
+            try {
+                String path = (String) evt.getSource();
+                System.out.println("path " + path);
+                is = com.codename1.io.FileSystemStorage.getInstance().openInputStream(path);
+                Image i1 = Image.createImage(is);
+                listImages.setIcon(i1.scaledWidth(300));
+                
+            }catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
 }
