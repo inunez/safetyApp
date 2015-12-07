@@ -469,20 +469,20 @@
         <val key="MultiButton.sel#transparency" value="0" />
         <val key="MultiButton.transparency" value="0" />
         <val key="MultiLine1.fgColor" value="0" />
-        <font key="MultiLine1.font" type="system" face="0" style="1" size="16" />
+        <font key="MultiLine1.font" type="system" face="0" style="1" size="0" />
         <val key="MultiLine1.press#fgColor" value="0" />
-        <font key="MultiLine1.press#font" type="system" face="0" style="1" size="16" />
+        <font key="MultiLine1.press#font" type="system" face="0" style="1" size="0" />
         <val key="MultiLine1.press#transparency" value="0" />
         <val key="MultiLine1.sel#fgColor" value="0" />
-        <font key="MultiLine1.sel#font" type="system" face="0" style="1" size="16" />
+        <font key="MultiLine1.sel#font" type="system" face="0" style="1" size="0" />
         <val key="MultiLine1.sel#transparency" value="0" />
         <val key="MultiLine1.transparency" value="0" />
         <val key="MultiLine2.fgColor" value="33cc" />
         <font key="MultiLine2.font" type="system" face="0" style="1" size="0" />
-        <val key="MultiLine2.press#fgColor" value="33cc" />
+        <val key="MultiLine2.press#fgColor" value="ccccff" />
         <font key="MultiLine2.press#font" type="system" face="0" style="1" size="0" />
         <val key="MultiLine2.press#transparency" value="0" />
-        <val key="MultiLine2.sel#fgColor" value="33cc" />
+        <val key="MultiLine2.sel#fgColor" value="ccccff" />
         <font key="MultiLine2.sel#font" type="system" face="0" style="1" size="0" />
         <val key="MultiLine2.sel#transparency" value="0" />
         <val key="MultiLine2.transparency" value="0" />

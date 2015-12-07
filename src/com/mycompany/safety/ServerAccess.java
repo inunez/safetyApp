@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class ServerAccess {
 
-    public static List getEntriesFromFlickrService(String tag) {
+    public static List getEntriesFromServer(String tag) {
         
         try {
             ConnectionRequest req = new ConnectionRequest();
